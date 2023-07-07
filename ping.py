@@ -4,7 +4,7 @@ win_height = 700
 win_width = 500
 x1=20
 y1=200
-x2=670
+x2=650
 y2=350
 window=display.set_mode((700,500))
 clock = time.Clock()
@@ -13,7 +13,10 @@ display.set_caption("ping pong")
 background=transform.scale(image.load("bluescene.png"),(win_height,win_width))
 window.blit(background,(0,0))
 font.init()
-fontl=font.Font(None, 36)
+font = font.Font(None, 70)
+win1 = font.render('player1 win!', True, (255,0,0))
+win2 = font.render('player2 win!', True, (255,0,0))
+a=1
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y, player_speed, height, weight):
         super().__init__()
@@ -27,28 +30,38 @@ class GameSprite(sprite.Sprite):
 
 class Player1(GameSprite):
     def update(self):
-            keys_pressed=key.get_pressed()
-            if keys_pressed[K_w] and self.rect.y >5:
-                self.rect.y -=self.speed
-            if keys_pressed[K_s] and self.rect.y <395:
-                self.rect.y +=self.speed
+            global a
+            if a==1:
+                keys_pressed=key.get_pressed()
+                if keys_pressed[K_w] and self.rect.y >5:
+                    self.rect.y -=self.speed
+                if keys_pressed[K_s] and self.rect.y <395:
+                    self.rect.y +=self.speed
 
 class Player2(GameSprite):
     def update(self):
-            keys_pressed=key.get_pressed()
-            if keys_pressed[K_UP] and self.rect.y >5:
-                self.rect.y -=self.speed
-            if keys_pressed[K_DOWN] and self.rect.y <395:
-                self.rect.y +=self.speed
+        global a
+        if a==1:
+                keys_pressed=key.get_pressed()
+                if keys_pressed[K_UP] and self.rect.y >5:
+                    self.rect.y -=self.speed
+                if keys_pressed[K_DOWN] and self.rect.y <395:
+                    self.rect.y +=self.speed
 
 class Ball(GameSprite):
     def update(self):
         self.rect.x+=self.speed
+        if self.rect.x>800 or self.rect.x<-100 or self.rect.y>600 or self.rect.y<-100:
+            self.kill()
+
+        
 
 player1=Player1('paddle.png', x1,y1,3,30,100)
 player2=Player2('paddle.png', x2,y2,3,30,100)
-ball=Ball('ball.png', 350,250,3,30,30)
+ball=Ball('ball.png', 350,250,5,40,40)
 game=True
+finish=False
+wait=120
 while game:
     for e in event.get():
         if e.type == QUIT:
@@ -60,8 +73,31 @@ while game:
     player2.update()
     ball.reset()
     ball.update()
-
+    if finish == False:
+        if sprite.collide_rect(ball, player2):
+            ball.rect.x -=ball.speed
+        if sprite.collide_rect(ball, player1):
+            ball.rect.x +=ball.speed
+    if ball.rect.x>690:
+        finish=True
+        a=0
+        window.blit(win1,(200,200))
+        if wait==0:
+            wait==120
+            finish=False
+            a=1
+        else:
+            wait-=1
+    if ball.rect.x<10:
+        finish=True
+        window.blit(win2,(200,200))
+        a=0 
+        if wait==0:
+            wait==120
+            finish=False
+            a=1
+        else:
+            wait-=1  
     display.update()
     clock.tick(FPS)
-
         
