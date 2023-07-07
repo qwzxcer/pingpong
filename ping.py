@@ -16,7 +16,7 @@ font.init()
 font = font.Font(None, 70)
 win1 = font.render('player1 win!', True, (255,0,0))
 win2 = font.render('player2 win!', True, (255,0,0))
-a=1
+a=True
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y, player_speed, height, weight):
         super().__init__()
@@ -31,7 +31,7 @@ class GameSprite(sprite.Sprite):
 class Player1(GameSprite):
     def update(self):
             global a
-            if a==1:
+            if a:
                 keys_pressed=key.get_pressed()
                 if keys_pressed[K_w] and self.rect.y >5:
                     self.rect.y -=self.speed
@@ -41,7 +41,7 @@ class Player1(GameSprite):
 class Player2(GameSprite):
     def update(self):
         global a
-        if a==1:
+        if a:
                 keys_pressed=key.get_pressed()
                 if keys_pressed[K_UP] and self.rect.y >5:
                     self.rect.y -=self.speed
@@ -80,22 +80,22 @@ while game:
             ball.rect.x +=ball.speed
     if ball.rect.x>690:
         finish=True
-        a=0
+        a=False
         window.blit(win1,(200,200))
         if wait==0:
             wait==120
             finish=False
-            a=1
+            a=True
         else:
             wait-=1
     if ball.rect.x<10:
         finish=True
         window.blit(win2,(200,200))
-        a=0 
+        a=False 
         if wait==0:
             wait==120
             finish=False
-            a=1
+            a=True
         else:
             wait-=1  
     display.update()
